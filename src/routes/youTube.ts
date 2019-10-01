@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getUserFollowerCount, youTubeErrorHandler } from '../controllers/youtube';
+import { getUserFollowerCount, youTubeErrorHandler } from '../controllers/youTube';
 
 const youTubeRouter = Router();
 
