@@ -1,6 +1,5 @@
 import axios from 'axios';
-import { RequestHandler, ErrorRequestHandler } from 'express';
-import { twitterError } from '../utils/errorHandlers';
+import { ErrorRequestHandler } from 'express';
 
 const twitterApi = axios.create({
     baseURL: 'https://api.twitter.com/1.1',
@@ -14,11 +13,11 @@ export const twitterErrorHandler: ErrorRequestHandler = async (err, req, res, ne
     res.status(500).send(`Twitter API: ${err.message}`);
 };
 
-export const getUserFollowerCount: RequestHandler = async (req, res, next) => {
+export const twitterFollowerCountRequest = async (username: string) => {
     try {
-        const user = await twitterApi(`/users/lookup.json?screen_name=${req.params.user}`);
-        res.send({ followerCount: user.data[0].followers_count });
+        const user = await twitterApi(`/users/lookup.json?screen_name=${username}`);
+        return { followerCount: user.data[0].followers_count };
     } catch (err) {
-        twitterError(err, next);
+        throw new Error(err);
     }
 };

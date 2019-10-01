@@ -1,9 +1,17 @@
 import { Router } from 'express';
-import { getUserFollowerCount, youTubeErrorHandler } from '../controllers/youTube';
+import { youTubeErrorHandler, youTubeFollowerCountRequest } from '../controllers/youTube';
 
 const youTubeRouter = Router();
 
-youTubeRouter.get('/:user', getUserFollowerCount);
+youTubeRouter.get('/:user', async (req, res, next) => {
+    try {
+        const user = await youTubeFollowerCountRequest(req.params.user);
+        res.send(user);
+    } catch (err) {
+        console.error(err);
+        next(err);
+    }
+});
 
 youTubeRouter.use(youTubeErrorHandler);
 
