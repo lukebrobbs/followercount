@@ -15,7 +15,7 @@ export const youTubeFollowerCountRequest = async (username: string) => {
         const user = await youTubeApi.get<IYouTubeUserData>(
             `/channels?part=statistics&id=${username}&key=${process.env.YOUTUBE_API_KEY}`,
         );
-        return { followerCount: user.data.items[0].statistics.subscriberCount };
+        return { youTubeFollowerCount: user.data.items[0].statistics.subscriberCount };
     } catch (err) {
         throw new Error(err);
     }

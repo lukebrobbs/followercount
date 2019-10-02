@@ -2,45 +2,30 @@ import { RequestHandler } from 'express';
 import { twitterFollowerCountRequest } from './twitter';
 import { youTubeFollowerCountRequest } from './youTube';
 import { InstagramFollowerCountRequest } from './instagram';
-import { IFollowerCount } from '../types';
+import { reflect } from '../utils/utils';
 
 export const getAllSocialFollowerCount: RequestHandler = async (req, res, next) => {
+    const prom = Promise.resolve(undefined);
     const { twitterUsername, youTubeUsername, instagramUsername } = req.body;
 
-    try {
-        let twitterFollowers: IFollowerCount;
-        let youTubeFollowers: IFollowerCount;
-        let instagramFollowers: IFollowerCount;
-        if (twitterUsername) {
-            try {
-                twitterFollowers = await twitterFollowerCountRequest(twitterUsername);
-            } catch(err) {
-                console.error(err)
-            }
-        }
-        if (youTubeUsername) {
-            try {
-                youTubeFollowers = await youTubeFollowerCountRequest(youTubeUsername);
-            } catch (err) {
-                console.error(err);
-            }
-        }
-        if (instagramUsername) {
-            try {
-                instagramFollowers = await InstagramFollowerCountRequest(instagramUsername);
-            } catch (err) {
-                console.error(err);
-            }
-        }
+    const twitterFollowers = twitterUsername ? twitterFollowerCountRequest(twitterUsername) : prom;
+    const youTubeFollowers = youTubeUsername ? youTubeFollowerCountRequest(youTubeUsername) : prom;
+    const instagramFollowers = instagramUsername ? InstagramFollowerCountRequest(instagramUsername) : prom;
 
-        const response = {
-            twitterFollowers,
-            youTubeFollowers,
-            instagramFollowers,
-        };
-        res.send(response);
+    try {
+        const results = await Promise.all([twitterFollowers, youTubeFollowers, instagramFollowers].map(reflect));
+        const successfulPromises = results.reduce((prev, curr) => {
+            if (curr.status === 'fulfilled') {
+                return {
+                    ...prev,
+                    ...curr.value,
+                };
+            }
+            return prev;
+        }, {});
+        res.send(successfulPromises);
     } catch (err) {
         console.error(err);
-        next(err);
+        throw new Error(err);
     }
 };

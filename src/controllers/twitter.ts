@@ -16,7 +16,7 @@ export const twitterErrorHandler: ErrorRequestHandler = async (err, req, res, ne
 export const twitterFollowerCountRequest = async (username: string) => {
     try {
         const user = await twitterApi(`/users/lookup.json?screen_name=${username}`);
-        return { followerCount: user.data[0].followers_count };
+        return { twitterFollowerCount: user.data[0].followers_count };
     } catch (err) {
         throw new Error(err);
     }
