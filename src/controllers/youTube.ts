@@ -13,7 +13,7 @@ export const youTubeErrorHandler: ErrorRequestHandler = async (err, req, res, ne
 export const youTubeFollowerCountRequest = async (username: string) => {
     try {
         const user = await youTubeApi.get<IYouTubeUserData>(
-            `/channels?part=statistics&forUsername=${username}&key=${process.env.YOUTUBE_API_KEY}`,
+            `/channels?part=statistics&id=${username}&key=${process.env.YOUTUBE_API_KEY}`,
         );
         return { followerCount: user.data.items[0].statistics.subscriberCount };
     } catch (err) {

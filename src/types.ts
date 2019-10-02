@@ -18,3 +18,7 @@ export interface IYouTubeUserData {
         };
     }[];
 }
+
+export interface IFollowerCount {
+    followerCount: string;
+}
